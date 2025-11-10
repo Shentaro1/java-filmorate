@@ -11,38 +11,36 @@ import java.util.HashMap;
 
 
 @RestController
+@RequestMapping("/users")
 @Slf4j
 public class UserController {
     private final HashMap<Integer, User> allUsers = new HashMap<>();
     private int finalId = 0;
     SpringValidator springValidator = new SpringValidator();
 
-    @PostMapping("/users")
+    @PostMapping
     public User createUser(@RequestBody User user) throws ValidationException {
-        if (!springValidator.userValidator(user)) {
-            throw new ValidationException("Ошибка валидации");
-        } else {
-            user.setId(finalId + 1);
-            finalId++;
-            allUsers.put(user.getId(), user);
-            log.trace("User добавлен: {}", user.getName());
-            return user;
-        }
+        springValidator.userValidator(user);
+        user.setId(finalId + 1);
+        finalId++;
+        allUsers.put(user.getId(), user);
+        log.trace("User добавлен: {}", user.getName());
+        return user;
+
     }
 
-    @PutMapping("/users")
+    @PutMapping
     public User updateUser(@RequestBody User user) throws ValidationException {
-        if (!springValidator.userValidator(user)) {
-            throw new ValidationException("Ошибка валидации");
-        } else if (!allUsers.containsKey(user.getId())) {
+        springValidator.userValidator(user);
+        if (!allUsers.containsKey(user.getId())) {
             if (user.getId() < finalId) {
                 user.setId(finalId + 1);
-                User user1 = createUser(user);
+                createUser(user);
             } else if (user.getId() > finalId) {
                 finalId = user.getId();
-                User user1 = createUser(user);
+                createUser(user);
             }
-            throw new ValidationException("hgfcd");
+            throw new ValidationException("Ошибка");
         } else {
             allUsers.remove(user.getId());
             allUsers.put(user.getId(), user);
@@ -51,7 +49,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/users")
+    @GetMapping
     public ArrayList<User> getAllUsers() throws ValidationException {
         if (allUsers.isEmpty()){
             throw new ValidationException("Список allUsers пуст");

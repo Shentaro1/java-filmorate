@@ -12,13 +12,14 @@ import java.util.HashMap;
 
 
 @RestController
+@RequestMapping("/films")
 @Slf4j
 public class FilmController {
     private final HashMap<Integer, Film> filmStorage = new HashMap<>();
     private int finalId = 0;
     SpringValidator springValidator = new SpringValidator();
 
-    @PostMapping("/films")
+    @PostMapping
     public Film addFilm(@RequestBody Film film) throws ValidationException {
         springValidator.filmValidator(film);
         film.setId(finalId + 1);
@@ -29,7 +30,7 @@ public class FilmController {
 
     }
 
-    @PutMapping("/films")
+    @PutMapping
     public Film updateFilm(@RequestBody Film film) throws ValidationException {
         springValidator.filmValidator(film);
         if (!filmStorage.containsKey(film.getId())) {
@@ -40,7 +41,7 @@ public class FilmController {
         return film;
     }
 
-    @GetMapping("/films")
+    @GetMapping
     public ArrayList<Film> getFilmStorage() throws ValidationException {
         if (filmStorage.isEmpty()) {
             throw new ValidationException("Список filmStorage пуст");
