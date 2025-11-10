@@ -1,60 +1,61 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.execution.SpringValidator;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-@RestController
-@AllArgsConstructor
-public class UserController {
-    private HashMap<Integer, User> allUsers;
 
-    @PostMapping("/create-user")
+@RestController
+@Slf4j
+public class UserController {
+    private final HashMap<Integer, User> allUsers = new HashMap<>();
+    private int finalId = 0;
+    SpringValidator springValidator = new SpringValidator();
+
+    @PostMapping("/users")
     public User createUser(@RequestBody User user) throws ValidationException {
-        if (user == null) {
-            throw new ValidationException("Передан пустой объект");
-        } else if (user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
-            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
-        } else if (user.getLogin().isEmpty() || user.getLogin().contains(" ")) {
-            throw new ValidationException("Логин не может быть пустым и содержать пробелы");
-        } else if (user.getName().isEmpty() && (user.getLogin().isEmpty() || user.getLogin().contains(" "))) {
-            throw new ValidationException("Ошибка");
-        } else if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException("Дата рождения не может быть в будущем");
+        if (!springValidator.userValidator(user)) {
+            throw new ValidationException("Ошибка валидации");
         } else {
-            return allUsers.put(user.getId(), user);
+            user.setId(finalId + 1);
+            finalId++;
+            allUsers.put(user.getId(), user);
+            log.trace("User добавлен: {}", user.getName());
+            return user;
         }
     }
 
-    @PutMapping("/update-user")
+    @PutMapping("/users")
     public User updateUser(@RequestBody User user) throws ValidationException {
-        if (user == null) {
-            throw new ValidationException("Передан пустой объект");
-        } else if (user.getEmail().isEmpty() || !user.getEmail().contains("@")) {
-            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
-        } else if (user.getLogin().isEmpty() || user.getLogin().contains(" ")) {
-            throw new ValidationException("Логин не может быть пустым и содержать пробелы");
-        } else if (user.getName().isEmpty() && (user.getLogin().isEmpty() || user.getLogin().contains(" "))) {
-            throw new ValidationException("Ошибка");
-        } else if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException("Дата рождения не может быть в будущем");
+        if (!springValidator.userValidator(user)) {
+            throw new ValidationException("Ошибка валидации");
+        } else if (!allUsers.containsKey(user.getId())) {
+            if (user.getId() < finalId) {
+                user.setId(finalId + 1);
+                User user1 = createUser(user);
+            } else if (user.getId() > finalId) {
+                finalId = user.getId();
+                User user1 = createUser(user);
+            }
+            throw new ValidationException("hgfcd");
         } else {
             allUsers.remove(user.getId());
-            return allUsers.put(user.getId(), user);
+            allUsers.put(user.getId(), user);
+            log.trace("User обновлён: {}", user.getName());
+            return user;
         }
     }
 
-    @GetMapping("/get-users")
-    public void getAllUsers() throws ValidationException {
+    @GetMapping("/users")
+    public ArrayList<User> getAllUsers() throws ValidationException {
         if (allUsers.isEmpty()){
             throw new ValidationException("Список allUsers пуст");
         }
-        for (User user : allUsers.values()) {
-            System.out.println(user);
-        }
+        return new ArrayList<>(allUsers.values());
     }
 }
