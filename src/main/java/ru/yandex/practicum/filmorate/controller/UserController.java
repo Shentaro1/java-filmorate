@@ -51,7 +51,7 @@ public class UserController {
 
     @GetMapping
     public ArrayList<User> getAllUsers() throws ValidationException {
-        if (allUsers.isEmpty()){
+        if (allUsers.isEmpty()) {
             throw new ValidationException("Список allUsers пуст");
         }
         return new ArrayList<>(allUsers.values());
