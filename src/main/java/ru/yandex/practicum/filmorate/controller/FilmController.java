@@ -9,13 +9,14 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
 @RequestMapping("/films")
 @Slf4j
 public class FilmController {
-    private final HashMap<Integer, Film> filmStorage = new HashMap<>();
+    private final Map<Integer, Film> filmStorage = new HashMap<>();
     private int finalId = 0;
     SpringValidator springValidator = new SpringValidator();
 

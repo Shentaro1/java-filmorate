@@ -8,13 +8,14 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
-    private final HashMap<Integer, User> allUsers = new HashMap<>();
+    private final Map<Integer, User> allUsers = new HashMap<>();
     private int finalId = 0;
     SpringValidator springValidator = new SpringValidator();
 
@@ -44,7 +45,7 @@ public class UserController {
         } else {
             allUsers.remove(user.getId());
             allUsers.put(user.getId(), user);
-            log.trace("User обновлён: {}", user.getName());
+            log.info("User обновлён: {}", user.getName());
             return user;
         }
     }
