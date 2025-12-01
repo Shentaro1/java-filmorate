@@ -1,16 +1,22 @@
-package ru.yandex.practicum.filmorate.execution;
+package ru.yandex.practicum.filmorate.services;
 
+import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
-import ru.yandex.practicum.filmorate.interfaces.Validator;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storages.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storages.user.InMemoryUserStorage;
 
 import java.time.LocalDate;
+import java.util.Set;
 
-public class SpringValidator implements Validator {
+@Service
+public class FilmService {
+    InMemoryFilmStorage inMemoryFilmStorage = new InMemoryFilmStorage();
+    InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
 
-    @Override
-    public boolean filmValidator(Film film) throws ValidationException {
+    public static boolean filmValidator(Film film) throws ValidationException {
         if (film == null) {
             throw new ValidationException("Передан пустой объект");
         }
@@ -35,23 +41,21 @@ public class SpringValidator implements Validator {
         return true;
     }
 
-    @Override
-    public boolean userValidator(User user) throws ValidationException {
-        if (user == null) {
-            throw new ValidationException("Передан пустой объект");
+    public void addLike(int filmId, int userId) throws ValidationException, NotFoundException {
+        if (inMemoryUserStorage.getUser(userId) == null || inMemoryFilmStorage.getFilmById(filmId) == null) {
+            throw new ValidationException("Невозможно выполнить действие");
         }
-        if (user.getEmail() == null || !user.getEmail().contains("@") || user.getEmail().isBlank()) {
-            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
+
+        Film film = inMemoryFilmStorage.getFilmById(filmId);
+        User user = inMemoryUserStorage.getUser(userId);
+
+        Set<Long> likes = film.getLikes();
+        long userIdLong = (long) userId;
+        if (likes.contains(userIdLong)) {
+            throw new ValidationException("Пользователь уже поставил лайк этому фильму");
         }
-        if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            throw new ValidationException("Логин не может быть пустым и содержать пробелы");
-        }
-        if (user.getBirthday() == null || user.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException("Дата рождения не может быть в будущем");
-        }
-        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
-            user.setName(user.getLogin());
-        }
-        return true;
+        likes.add(userIdLong);
+
+        film.setLikes(likes);
     }
 }
