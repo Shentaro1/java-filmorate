@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.services;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.FriendsAddException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
@@ -9,14 +11,12 @@ import ru.yandex.practicum.filmorate.storages.user.InMemoryUserStorage;
 
 import java.lang.reflect.Array;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
+@AllArgsConstructor
 public class UserService {
-    InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
+    InMemoryUserStorage inMemoryUserStorage;
 
     public static boolean userValidator(User user) throws ValidationException {
         if (user == null) {
@@ -45,7 +45,11 @@ public class UserService {
         User friend = inMemoryUserStorage.getUser(friendId);
 
         if (user == null || friend == null) {
-            throw new FriendsAddException("Юзер не найден");
+            throw new NotFoundException("Юзер не найден");
+        }
+
+        if (id == friendId) {
+            throw new ValidationException("Нельзя добавить самого себя в друзья");
         }
 
         Set<Long> userFriends = user.getFriends();
@@ -66,12 +70,9 @@ public class UserService {
     public void deleteFriend(int id, int friendId) throws ValidationException, FriendsAddException, NotFoundException {
         User user = inMemoryUserStorage.getUser(id);
         if (inMemoryUserStorage.getUser(id) == null || inMemoryUserStorage.getUser(friendId) == null) {
-            throw new FriendsAddException("Юзер не найден");
+            throw new NotFoundException("Юзер не найден");
         }
         Set<Long> set = user.getFriends();
-        if (!set.contains((long) friendId)) {
-            throw new FriendsAddException("Юзера нет в друзьях");
-        }
         set.remove((long) friendId);
         user.setFriends(set);
 
@@ -81,11 +82,14 @@ public class UserService {
         friend.setFriends(setFriend);
     }
 
-    public ArrayList<User> allFriends(int id) throws ValidationException, FriendsAddException, NotFoundException {
+    public List<User> allFriends(int id) throws ValidationException, FriendsAddException, NotFoundException {
         ArrayList<User> friends = new ArrayList<>();
+        if (inMemoryUserStorage.getUser(id) == null) {
+            throw new NotFoundException("Юзер не найден");
+        }
         User user = inMemoryUserStorage.getUser(id);
-        if (user.getFriends() == null) {
-            throw new FriendsAddException("У него нет друзей");
+        if (user.getFriends() == null || user.getFriends().isEmpty()) {
+            return Collections.emptyList();
         }
         Set<Long> set = user.getFriends();
         for (Long i : set) {

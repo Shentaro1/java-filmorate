@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.services.UserService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 @Slf4j
@@ -20,16 +21,19 @@ public class InMemoryUserStorage implements UserStorage {
     private int finalId = 0;
 
     public User createUser(User user) throws ValidationException {
+        user.setFriends(new HashSet<>());
         UserService.userValidator(user);
         user.setId(finalId + 1);
         finalId++;
         allUsers.put(user.getId(), user);
         log.trace("User добавлен: {}", user.getName());
         return user;
-
     }
 
     public User updateUser(User user) throws NotFoundException, ValidationException {
+        if (user.getFriends() == null) {
+            user.setFriends(new HashSet<>());
+        }
         UserService.userValidator(user);
         if (!allUsers.containsKey(user.getId())) {
             if (user.getId() < finalId) {

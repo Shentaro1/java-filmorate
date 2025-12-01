@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.services;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -12,9 +14,10 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Service
+@AllArgsConstructor
 public class FilmService {
-    InMemoryFilmStorage inMemoryFilmStorage = new InMemoryFilmStorage();
-    InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
+    InMemoryFilmStorage inMemoryFilmStorage;
+    InMemoryUserStorage inMemoryUserStorage;
 
     public static boolean filmValidator(Film film) throws ValidationException {
         if (film == null) {
@@ -31,6 +34,9 @@ public class FilmService {
         }
         if (film.getReleaseDate() == null) {
             throw new ValidationException("Дата релиза не может быть null");
+        }
+        if (film.getLikes() == null) {
+            throw new ValidationException("Список лайков null");
         }
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12,28))) {
             throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года");
@@ -57,5 +63,9 @@ public class FilmService {
         likes.add(userIdLong);
 
         film.setLikes(likes);
+    }
+
+    public void deleteLike(int id, int userId) {
+
     }
 }

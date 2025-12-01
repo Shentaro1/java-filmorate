@@ -3,34 +3,34 @@ package ru.yandex.practicum.filmorate.storages.film;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.services.FilmService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 @Slf4j
-@RequestMapping
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> filmStorage = new HashMap<>();
     private int finalId = 0;
 
-    @PutMapping("/films")
-    public Film updateFilm(@RequestBody Film film) throws ValidationException {
+    public Film updateFilm(Film film) throws ValidationException, NotFoundException {
         FilmService.filmValidator(film);
         if (!filmStorage.containsKey(film.getId())) {
-            throw new ValidationException("Фильм с ID " + film.getId() + " не найден");
+            throw new NotFoundException("Фильм с ID " + film.getId() + " не найден");
         }
         filmStorage.put(film.getId(), film);
         log.trace("Фильм обновлён: ID={}, Name={}", film.getId(), film.getName());
         return film;
     }
 
-    @PostMapping("/films")
-    public Film addFilm(@RequestBody Film film) throws ValidationException {
+    public Film addFilm(Film film) throws ValidationException {
+        film.setLikes(new HashSet<>());
         FilmService.filmValidator(film);
         film.setId(finalId + 1);
         finalId++;
@@ -40,7 +40,6 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     }
 
-    @GetMapping("/films")
     public ArrayList<Film> getFilmStorage() throws ValidationException {
         if (filmStorage.isEmpty()) {
             throw new ValidationException("Список filmStorage пуст");
@@ -48,8 +47,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return new ArrayList<>(filmStorage.values());
     }
 
-    @GetMapping("/films/{id}")
-    public Film getFilmById(@PathVariable int id) throws ValidationException {
+    public Film getFilmById(int id) throws ValidationException {
         if (filmStorage.isEmpty()) {
             throw new ValidationException("Список filmStorage пуcт");
         }
@@ -60,8 +58,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return filmStorage.get(id);
     }
 
-    @DeleteMapping("/films/{id}")
-    public void deleteFilm(@PathVariable int id) throws ValidationException {
+    public void deleteFilm(int id) throws ValidationException {
         if (filmStorage.isEmpty()) {
             throw new ValidationException("Список filmStorage пуcт");
         }

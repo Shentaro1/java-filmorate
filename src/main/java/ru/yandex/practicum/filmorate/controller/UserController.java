@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.FriendsAddException;
@@ -14,30 +16,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@RestController("/users")
+@RestController
+@RequestMapping("/users")
 @Slf4j
+@AllArgsConstructor
 public class UserController {
-    UserService userService = new UserService();
-    InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
+    UserService userService;
+    InMemoryUserStorage inMemoryUserStorage;
 
-    @PutMapping("/{id}/friends/{friendsId}")
-    public void addFriend(@PathVariable int id, @PathVariable int friendsId) throws ValidationException, FriendsAddException, NotFoundException {
-        userService.addFriend(id, friendsId);
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable int id, @PathVariable int friendId) throws ValidationException, FriendsAddException, NotFoundException {
+        userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public void dellFriend(@PathVariable int id, @PathVariable int friendsId) throws ValidationException, FriendsAddException, NotFoundException {
-        userService.deleteFriend(id, friendsId);
+    public void dellFriend(@PathVariable int id, @PathVariable int friendId) throws ValidationException, FriendsAddException, NotFoundException {
+        userService.deleteFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
-    public ArrayList<User> getAllFriends(@PathVariable int id) throws ValidationException, FriendsAddException, NotFoundException {
+    public List<User> getAllFriends(@PathVariable int id) throws ValidationException, FriendsAddException, NotFoundException {
         return userService.allFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public ArrayList<User> sharedListOfFriends(@PathVariable int id, @PathVariable int friendId) throws ValidationException, NotFoundException {
-        return userService.sharedListFriends(id, friendId);
+    public ArrayList<User> sharedListOfFriends(@PathVariable int id, @PathVariable int otherId) throws ValidationException, NotFoundException {
+        return userService.sharedListFriends(id, otherId);
     }
 
     @PostMapping
@@ -64,4 +68,6 @@ public class UserController {
     public void delUser(@PathVariable int id) throws ValidationException, NotFoundException {
         inMemoryUserStorage.delUser(id);
     }
+
+
 }
