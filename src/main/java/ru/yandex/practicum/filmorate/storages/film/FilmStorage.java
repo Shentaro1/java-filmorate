@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storages.film;
 
-import org.springframework.web.bind.annotation.PathVariable;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;

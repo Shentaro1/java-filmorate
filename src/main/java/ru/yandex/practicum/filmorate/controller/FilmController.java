@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.services.FilmService;
 import ru.yandex.practicum.filmorate.storages.film.InMemoryFilmStorage;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -59,7 +58,7 @@ public class FilmController {
 
     @GetMapping("/popular")
     public List<Film> getPopularFilms(
-            @RequestParam(value = "count", defaultValue = "10") int count) throws LikeAddException, ValidationException, NotFoundException {
+            @RequestParam(value = "count", defaultValue = "10") int count) throws ValidationException, NotFoundException {
         return filmService.returnTopFilmsOnLike(count);
     }
 

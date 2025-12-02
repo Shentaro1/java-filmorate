@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.services.FilmService;
 import ru.yandex.practicum.filmorate.services.UserService;
 
 import java.util.ArrayList;
@@ -20,8 +19,12 @@ public class InMemoryUserStorage implements UserStorage {
     private final Map<Integer, User> allUsers = new HashMap<>();
     private int finalId = 0;
 
+    @Override
     public User createUser(User user) throws ValidationException {
-        user.setFriends(new HashSet<>());
+        if (user.getFriends() == null) {
+            user.setFriends(new HashSet<>());
+        }
+
         UserService.userValidator(user);
         user.setId(finalId + 1);
         finalId++;
@@ -30,6 +33,7 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
+    @Override
     public User updateUser(User user) throws NotFoundException, ValidationException {
         if (user.getFriends() == null) {
             user.setFriends(new HashSet<>());
@@ -52,21 +56,24 @@ public class InMemoryUserStorage implements UserStorage {
         }
     }
 
-    public ArrayList<User> getAllUsers() throws ValidationException, NotFoundException {
+    @Override
+    public ArrayList<User> getAllUsers() throws NotFoundException {
         if (allUsers.isEmpty()) {
             throw new NotFoundException("Список allUsers пуст");
         }
         return new ArrayList<>(allUsers.values());
     }
 
-    public User getUser(int id) throws ValidationException, NotFoundException {
+    @Override
+    public User getUser(int id) throws NotFoundException {
         if (allUsers.get(id) == null) {
             throw new NotFoundException("Юзера с таким id не существует");
         }
         return allUsers.get(id);
     }
 
-    public void delUser(int id) throws ValidationException, NotFoundException {
+    @Override
+    public void delUser(int id) throws NotFoundException {
         if (allUsers.get(id) == null) {
             throw new NotFoundException("Юзера с таким id не существует");
         }

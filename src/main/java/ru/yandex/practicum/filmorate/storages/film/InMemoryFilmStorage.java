@@ -15,6 +15,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> filmStorage = new HashMap<>();
     private int finalId = 0;
 
+    @Override
     public Film updateFilm(Film film) throws ValidationException, NotFoundException {
         if (film.getLikes() == null) {
             film.setLikes(new HashSet<>());
@@ -28,8 +29,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
+    @Override
     public Film addFilm(Film film) throws ValidationException {
-        film.setLikes(new HashSet<>());
+        if (film.getLikes() == null) {
+            film.setLikes(new HashSet<>());
+        }
         FilmService.filmValidator(film);
         film.setId(finalId + 1);
         finalId++;
@@ -39,6 +43,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     }
 
+    @Override
     public ArrayList<Film> getFilmStorage() {
         if (filmStorage.isEmpty()) {
             return new ArrayList<>();
@@ -46,6 +51,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return new ArrayList<>(filmStorage.values());
     }
 
+    @Override
     public Film getFilmById(int id) throws ValidationException {
         if (id <= 0) {
             throw new ValidationException("ID должен быть положительным числом");
@@ -63,6 +69,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return film;
     }
 
+    @Override
     public void deleteFilm(int id) throws ValidationException {
         if (filmStorage.isEmpty()) {
             throw new ValidationException("Список filmStorage пуcт");

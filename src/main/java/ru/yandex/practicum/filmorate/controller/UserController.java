@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.FriendsAddException;
@@ -11,7 +10,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.services.UserService;
 import ru.yandex.practicum.filmorate.storages.user.InMemoryUserStorage;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
