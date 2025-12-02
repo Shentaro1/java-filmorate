@@ -73,10 +73,11 @@ public class FilmService {
         film.setLikes(likes);
     }
 
+    //пиздец
     public void deleteLike(int userId, int filmId) throws NotFoundException, ValidationException {
         Film film = inMemoryFilmStorage.getFilmById(filmId);
         if (film == null) {
-            throw new NotFoundException("Фильм с id=" + filmId + " не найден");
+
         }
 
         User user = inMemoryUserStorage.getUser(userId);
@@ -86,13 +87,13 @@ public class FilmService {
 
         Set<Long> likes = film.getLikes();
         if (likes == null || likes.isEmpty()) {
-            throw new NotFoundException("У фильма нет лайков");
+            likes = new HashSet<>();
         }
 
         long userIdLong = (long) userId;
-        if (!likes.contains(userIdLong)) {
-            throw new NotFoundException("Пользователь не ставил лайк этому фильму");
-        }
+//        if (!likes.contains(userIdLong)) {
+//            //throw new NotFoundException("Пользователь не ставил лайк этому фильму");
+//        }
 
         likes.remove(userIdLong);
 
@@ -108,7 +109,7 @@ public class FilmService {
         films.sort((f1, f2) -> {
             int likes1 = f1.getLikes() != null ? f1.getLikes().size() : 0;
             int likes2 = f2.getLikes() != null ? f2.getLikes().size() : 0;
-            return Integer.compare(likes1, likes2);
+            return Integer.compare(likes2, likes1);
         });
         int limit = Math.min(count, films.size());
         return new ArrayList<>(films.subList(0, limit));

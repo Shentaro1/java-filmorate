@@ -47,14 +47,20 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     public Film getFilmById(int id) throws ValidationException {
-        if (filmStorage.isEmpty()) {
-            throw new NotFoundException("Список filmStorage пуcт");
+        if (id <= 0) {
+            throw new ValidationException("ID должен быть положительным числом");
         }
 
-        if (filmStorage.get(id) == null) {
-            throw new NotFoundException("Данного фильма не существует");
+        if (filmStorage == null) {
+            throw new IllegalStateException("Хранилище фильмов не инициализировано");
         }
-        return filmStorage.get(id);
+
+        Film film = filmStorage.get(id);
+        if (film == null) {
+            throw new NotFoundException("Фильм с id=" + id + " не найден");
+        }
+
+        return film;
     }
 
     public void deleteFilm(int id) throws ValidationException {
