@@ -8,8 +8,6 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storages.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storages.film.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storages.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storages.user.UserStorage;
 
 import java.time.LocalDate;

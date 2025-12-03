@@ -1,16 +1,13 @@
 package ru.yandex.practicum.filmorate.services;
 
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.FriendsAddException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storages.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storages.user.UserStorage;
 
-import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.*;
 
