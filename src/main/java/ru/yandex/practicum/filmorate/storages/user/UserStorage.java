@@ -8,8 +8,12 @@ import java.util.ArrayList;
 
 public interface UserStorage {
     User createUser(User user) throws ValidationException;
+
     User updateUser(User user) throws ValidationException, NotFoundException;
+
     ArrayList<User> getAllUsers() throws ValidationException, NotFoundException;
+
     User getUser(int id) throws ValidationException, NotFoundException;
+
     void delUser(int id) throws ValidationException, NotFoundException;
 }
