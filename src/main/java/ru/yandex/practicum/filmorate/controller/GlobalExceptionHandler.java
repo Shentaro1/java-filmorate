@@ -26,27 +26,33 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse notFoundHandler(final NotFoundException e) {
+        String error = "error: Объект не найден";
+        String description = "errorMessage " + e.getMessage();
         return new ErrorResponse(
-                "error: Объект не найден",
-                "errorMessage " + e.getMessage()
+                error,
+                description
         );
     }
 
     @ExceptionHandler(FriendsAddException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse friendAddHandler(final FriendsAddException e) {
+        String error = "error: Ошибка при добавлении друга";
+        String description = "errorMessage " + e.getMessage();
         return new ErrorResponse(
-                "error: Ошибка при добавлении друга",
-                "errorMessage " + e.getMessage()
+                error,
+                description
         );
     }
 
     @ExceptionHandler(LikeAddException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse likeAddHandler(final LikeAddException e) {
+        String error = "error: Ошибка при добавлении лайка";
+        String description = "errorMessage " + e.getMessage();
         return new ErrorResponse(
-                "error: Ошибка при добавлении лайка",
-                "errorMessage " + e.getMessage()
+                error,
+                description
         );
     }
 }
