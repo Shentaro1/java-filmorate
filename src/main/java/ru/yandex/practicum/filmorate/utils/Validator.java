@@ -22,7 +22,7 @@ public class Validator {
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
         if (user.getFriends() == null) {
-            throw new ValidationException("Список друзей null");
+            throw new ValidationException("Список друзей не может быть null");
         }
         if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
             user.setName(user.getLogin());
