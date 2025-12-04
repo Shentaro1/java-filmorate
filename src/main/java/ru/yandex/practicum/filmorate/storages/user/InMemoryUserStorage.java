@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.services.UserService;
+import ru.yandex.practicum.filmorate.utils.Validator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +25,7 @@ public class InMemoryUserStorage implements UserStorage {
             user.setFriends(new HashSet<>());
         }
 
-        UserService.userValidator(user);
+        Validator.userValidator(user);
         user.setId(finalId + 1);
         finalId++;
         allUsers.put(user.getId(), user);
@@ -38,7 +38,7 @@ public class InMemoryUserStorage implements UserStorage {
         if (user.getFriends() == null) {
             user.setFriends(new HashSet<>());
         }
-        UserService.userValidator(user);
+        Validator.userValidator(user);
         if (!allUsers.containsKey(user.getId())) {
             if (user.getId() < finalId) {
                 user.setId(finalId + 1);

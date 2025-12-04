@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.services.FilmService;
+import ru.yandex.practicum.filmorate.utils.Validator;
 
 import java.util.*;
 
@@ -20,7 +20,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (film.getLikes() == null) {
             film.setLikes(new HashSet<>());
         }
-        FilmService.filmValidator(film);
+        Validator.filmValidator(film);
         if (!filmStorage.containsKey(film.getId())) {
             throw new NotFoundException("Фильм с ID " + film.getId() + " не найден");
         }
@@ -34,7 +34,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (film.getLikes() == null) {
             film.setLikes(new HashSet<>());
         }
-        FilmService.filmValidator(film);
+        Validator.filmValidator(film);
         film.setId(finalId + 1);
         finalId++;
         filmStorage.put(film.getId(), film);

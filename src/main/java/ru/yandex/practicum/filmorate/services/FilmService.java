@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storages.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storages.user.UserStorage;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Slf4j
@@ -19,34 +18,6 @@ import java.util.*;
 public class FilmService {
     FilmStorage filmStorage;
     UserStorage userStorage;
-
-    public static boolean filmValidator(Film film) throws ValidationException {
-        if (film == null) {
-            throw new ValidationException("Передан пустой объект");
-        }
-        if (film.getName() == null || film.getName().isBlank()) {
-            throw new ValidationException("Название не может быть пустым");
-        }
-        if (film.getDescription() == null) {
-            throw new ValidationException("Описание не может быть null");
-        }
-        if (film.getDescription().length() > 200) {
-            throw new ValidationException("Максимальная длинна описания 200");
-        }
-        if (film.getReleaseDate() == null) {
-            throw new ValidationException("Дата релиза не может быть null");
-        }
-        if (film.getLikes() == null) {
-            throw new ValidationException("Список лайков null");
-        }
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12,28))) {
-            throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года");
-        }
-        if (film.getDuration() <= 0) {
-            throw new ValidationException("Продолжительность фильма должна быть положительным числом");
-        }
-        return true;
-    }
 
     public void addLike(int filmId, int userId) throws ValidationException, NotFoundException, LikeAddException {
         if (userStorage.getUser(userId) == null) {
@@ -62,7 +33,6 @@ public class FilmService {
         likes.add((long) userId);
     }
 
-    //пиздец
     public Film deleteLike(int filmId, int userId) throws NotFoundException, ValidationException {
         Film film = filmStorage.getFilmById(filmId);
         if (filmStorage.getFilmById(filmId) == null || userStorage.getUser(userId) == null) {
@@ -88,4 +58,23 @@ public class FilmService {
         return new ArrayList<>(films.subList(0, limit));
     }
 
+    public Film updateFilm(Film film) throws ValidationException, NotFoundException {
+        return filmStorage.updateFilm(film);
+    }
+
+    public Film addFilm(Film film) throws ValidationException {
+        return filmStorage.addFilm(film);
+    }
+
+    public ArrayList<Film> getFilmStorage() throws ValidationException {
+        return filmStorage.getFilmStorage();
+    }
+
+    public Film getFilmById(int id) throws ValidationException {
+        return filmStorage.getFilmById(id);
+    }
+
+    public void deleteFilm(int id) throws ValidationException {
+        filmStorage.deleteFilm(id);
+    }
 }

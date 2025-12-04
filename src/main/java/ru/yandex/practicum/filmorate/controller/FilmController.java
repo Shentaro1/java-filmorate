@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.services.FilmService;
-import ru.yandex.practicum.filmorate.storages.film.InMemoryFilmStorage;
 
 import java.util.List;
 
@@ -19,7 +18,6 @@ import java.util.List;
 @AllArgsConstructor
 public class FilmController {
     FilmService filmService;
-    InMemoryFilmStorage inMemoryFilmStorage;
 
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) throws ValidationException, NotFoundException, LikeAddException {
@@ -33,27 +31,27 @@ public class FilmController {
 
     @PostMapping
     public Film addFilm(@RequestBody Film film) throws ValidationException {
-        return inMemoryFilmStorage.addFilm(film);
+        return filmService.addFilm(film);
     }
 
     @PutMapping
     public Film updateFilm(@RequestBody Film film) throws ValidationException, NotFoundException {
-        return inMemoryFilmStorage.updateFilm(film);
+        return filmService.updateFilm(film);
     }
 
     @GetMapping
-    public List<Film> getFilmStorage() {
-        return inMemoryFilmStorage.getFilmStorage();
+    public List<Film> getFilmStorage() throws ValidationException {
+        return filmService.getFilmStorage();
     }
 
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable int id) throws ValidationException {
-        return inMemoryFilmStorage.getFilmById(id);
+        return filmService.getFilmById(id);
     }
 
     @DeleteMapping("/{id}")
     public void deleteFilm(@PathVariable int id) throws ValidationException {
-        inMemoryFilmStorage.deleteFilm(id);
+        filmService.deleteFilm(id);
     }
 
     @GetMapping("/popular")

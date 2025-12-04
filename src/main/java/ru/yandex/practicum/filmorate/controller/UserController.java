@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.services.UserService;
-import ru.yandex.practicum.filmorate.storages.user.InMemoryUserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.List;
 @AllArgsConstructor
 public class UserController {
     UserService userService;
-    InMemoryUserStorage inMemoryUserStorage;
 
     @PutMapping("/{id}/friends/{friendId}")
     public void addFriend(@PathVariable int id, @PathVariable int friendId) throws ValidationException, FriendsAddException, NotFoundException {
@@ -44,27 +42,27 @@ public class UserController {
 
     @PostMapping
     public User createUser(@RequestBody User user) throws ValidationException {
-        return inMemoryUserStorage.createUser(user);
+        return userService.createUser(user);
     }
 
     @PutMapping
     public User updateUser(@RequestBody User user) throws ValidationException, NotFoundException {
-        return inMemoryUserStorage.updateUser(user);
+        return userService.updateUser(user);
     }
 
     @GetMapping
     public ArrayList<User> getAllUsers() throws ValidationException, NotFoundException {
-        return inMemoryUserStorage.getAllUsers();
+        return userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable int id) throws ValidationException, NotFoundException {
-        return inMemoryUserStorage.getUser(id);
+        return userService.getUser(id);
     }
 
     @DeleteMapping("/{id}")
     public void delUser(@PathVariable int id) throws ValidationException, NotFoundException {
-        inMemoryUserStorage.delUser(id);
+        userService.delUser(id);
     }
 
 

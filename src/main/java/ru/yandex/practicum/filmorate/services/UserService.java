@@ -8,35 +8,12 @@ import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storages.user.UserStorage;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
 @AllArgsConstructor
 public class UserService {
     UserStorage userStorage;
-
-    public static boolean userValidator(User user) throws ValidationException {
-        if (user == null) {
-            throw new ValidationException("Передан пустой объект");
-        }
-        if (user.getEmail() == null || !user.getEmail().contains("@") || user.getEmail().isBlank()) {
-            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
-        }
-        if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            throw new ValidationException("Логин не может быть пустым и содержать пробелы");
-        }
-        if (user.getBirthday() == null || user.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException("Дата рождения не может быть в будущем");
-        }
-        if (user.getFriends() == null) {
-            throw new ValidationException("Список друзей null");
-        }
-        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
-            user.setName(user.getLogin());
-        }
-        return true;
-    }
 
     public void addFriend(int id, int friendId) throws FriendsAddException, ValidationException, NotFoundException {
         User user = userStorage.getUser(id);
@@ -112,4 +89,23 @@ public class UserService {
         return users;
     }
 
+    public User createUser(User user) throws ValidationException {
+        return userStorage.createUser(user);
+    }
+
+    public User updateUser(User user) throws NotFoundException, ValidationException {
+        return userStorage.updateUser(user);
+    }
+
+    public ArrayList<User> getAllUsers() throws NotFoundException, ValidationException {
+        return userStorage.getAllUsers();
+    }
+
+    public User getUser(int id) throws NotFoundException, ValidationException {
+        return userStorage.getUser(id);
+    }
+
+    public void delUser(int id) throws NotFoundException, ValidationException {
+        userStorage.delUser(id);
+    }
 }
