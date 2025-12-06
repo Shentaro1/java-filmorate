@@ -1,0 +1,83 @@
+package ru.yandex.practicum.filmorate.storages.user;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.utils.Validator;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
+@Slf4j
+@Component
+public class InMemoryUserStorage implements UserStorage {
+    private final Map<Integer, User> allUsers = new HashMap<>();
+    private int finalId = 0;
+
+    @Override
+    public User createUser(User user) throws ValidationException {
+        if (user.getFriends() == null) {
+            user.setFriends(new HashSet<>());
+        }
+
+        Validator.userValidator(user);
+        user.setId(finalId + 1);
+        finalId++;
+        allUsers.put(user.getId(), user);
+        log.trace("User добавлен: {}", user.getName());
+        return user;
+    }
+
+    @Override
+    public User updateUser(User user) throws NotFoundException, ValidationException {
+        if (user.getFriends() == null) {
+            user.setFriends(new HashSet<>());
+        }
+        Validator.userValidator(user);
+        if (!allUsers.containsKey(user.getId())) {
+            if (user.getId() < finalId) {
+                user.setId(finalId + 1);
+                createUser(user);
+            } else if (user.getId() > finalId) {
+                finalId = user.getId();
+                createUser(user);
+            }
+            throw new NotFoundException("Ошибка при обновлении юзера");
+        } else {
+            allUsers.remove(user.getId());
+            allUsers.put(user.getId(), user);
+            log.info("User обновлён: {}", user.getName());
+            return user;
+        }
+    }
+
+    @Override
+    public ArrayList<User> getAllUsers() throws NotFoundException {
+        if (allUsers.isEmpty()) {
+            throw new NotFoundException("Список allUsers пуст");
+        }
+        return new ArrayList<>(allUsers.values());
+    }
+
+    @Override
+    public User getUser(int id) throws NotFoundException {
+        if (allUsers.get(id) == null) {
+            throw new NotFoundException("Юзера с таким id не существует");
+        }
+        return allUsers.get(id);
+    }
+
+    @Override
+    public void delUser(int id) throws NotFoundException {
+        if (allUsers.get(id) == null) {
+            throw new NotFoundException("Юзера с таким id не существует");
+        }
+        allUsers.remove(id);
+    }
+
+}
