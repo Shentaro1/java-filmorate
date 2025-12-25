@@ -1,0 +1,20 @@
+task-genius:
+  notifications:
+    email:
+      enabled: true
+      address: "ivan.petrov@pochti.net"
+    phone:
+      enabled: false
+      number: "1234567890"
+  ui:
+    theme: "dark"
+spring:
+  datasource:
+    url: jdbc:h2:file:./db/filmorate
+    username: svaild
+    password: 2110
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+
+
